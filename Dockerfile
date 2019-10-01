@@ -52,11 +52,9 @@ RUN mkdir /home/src/
 RUN mkdir /home/src/data
 
 COPY wrapRP2paths.py /src/
-RUN chmod 755 /src/wrapRP2paths.py
 RUN chmod 755 /src/RP2paths.py
 RUN mkdir /src/results
 RUN chmod -R 755 /src/results
-RUN ln -s /src/wrapRP2paths.py /usr/bin
 VOLUME /src
 
 
