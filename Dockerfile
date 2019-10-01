@@ -51,8 +51,6 @@ RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 RUN mkdir /home/src/
 RUN mkdir /home/src/data
 
-COPY wrapRP2paths.py /src/
-RUN chmod 755 /src/RP2paths.py
 RUN mkdir /src/results
 RUN chmod -R 755 /src/results
 VOLUME /src
