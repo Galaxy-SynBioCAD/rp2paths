@@ -3,7 +3,7 @@
 * Docker image: [ibisba/rp2paths](https://hub.docker.com/r/ibisba/rp2paths/)
 * Base images: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3/dockerfile)
 
-Docker implementation of rp2paths. i
+Docker implementation of rp2paths
 
 ### Quick start
 
@@ -12,7 +12,7 @@ Docker implementation of rp2paths. i
 ##### Build the docker
 
 ```
-docker build -t ibisba/rp2paths .
+docker build -t brsynth/rp2paths .
 ```
 
 
