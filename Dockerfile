@@ -38,22 +38,17 @@ RUN conda install --quiet --yes python-graphviz pydotplus lxml
 
 
 # Download and "install" rp2paths release
-WORKDIR /tmp
+RUN mkdir /home/
+WORKDIR /home/
 RUN echo "$RP2PATHS_SHA256  rp2paths.tar.gz" > rp2paths.tar.gz.sha256
 RUN cat rp2paths.tar.gz.sha256
 RUN echo Downloading $RP2PATHS_URL
 RUN curl -v -L -o rp2paths.tar.gz $RP2PATHS_URL && sha256sum rp2paths.tar.gz && sha256sum -c rp2paths.tar.gz.sha256
-RUN mkdir /src
-RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /src
-WORKDIR /src
+RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /home/
 RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 
-RUN mkdir /home/src/
-RUN mkdir /home/src/data
-
-RUN mkdir /src/results
-RUN chmod -R 755 /src/results
-VOLUME /src
+RUN mkdir /home/data
+RUN mkdir /home/results
 
 
 #RUN mv src /opt/rp2paths
