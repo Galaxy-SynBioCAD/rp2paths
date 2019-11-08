@@ -15,6 +15,7 @@ import io
 import json
 import time
 from rq import Connection, Queue
+import tarfile
 
 import rp2paths
 
@@ -65,7 +66,6 @@ class RestQuery(Resource):
             rp2_pathways_bytes = request.files['rp2_pathways'].read()
             params = json.load(request.files['data'])
             #pass the cache parameters to the rpCofactors object
-            #run(rp2_pathways_bytes, timeout)
             async_results = q.enqueue(rp2paths.run,
                                       rp2_pathways_bytes,
                                       params['timeout'])
@@ -74,21 +74,20 @@ class RestQuery(Resource):
                 result = async_results.return_value
                 time.sleep(2.0)
             #TODO: check that!
-            out_paths = io.BytesIO()
-            out_paths.write(result[0])
-            out_compounds = io.BytesIO()
-            out_compounds.write(result[1])
+            #make a tar to pass back to the rp2path flask service
+            out_paths = io.BytesIO(result[0])
+            out_compounds = io.BytesIO(result[1])
             outTar = io.BytesIO()
-            with tarfile.open(fileobj=outputTar, mode='w:xz') as tf:
-                for rpsbml_name in rpsbml_paths:
-                    info = tarfile.TarInfo(name='rp2_pathways')
-                    info.size = len(out_paths)
+            if not return_content==None or not (return_content[0]==b'' and return_content[1]==b''):
+                with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
+                    info = tarfile.TarInfo(name='rp2paths_pathways')
+                    info.size = len(result[0])
                     tf.addfile(tarinfo=info, fileobj=out_paths)
-                    info = tarfile.TarInfo(name='rp2_compounds')
-                    info.size = len(out_compounds)
+                    info = tarfile.TarInfo(name='rp2paths_compounds')
+                    info.size = len(result[1])
                     tf.addfile(tarinfo=info, fileobj=out_compounds)
             ###### IMPORTANT ######
-            scopeCSV.seek(0)
+            outTar.seek(0)
             #######################
         return send_file(outTar, as_attachment=True, attachment_filename='rp2paths_resuts.tar', mimetype='application/x-tar')
 
