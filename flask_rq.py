@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Created on March 5 2019
 
@@ -6,18 +5,18 @@ Created on March 5 2019
 @description: REST+RQ version of RP2paths
 
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file, abort
 from flask_restful import Resource, Api
 import io
 import json
 import time
-from rq import Connection, Queue
 import tarfile
 
-import rp2paths
+from rq import Connection, Queue
+from redis import Redis
+
+from rp2paths import run
 
 
 #######################################################
@@ -61,35 +60,50 @@ class RestApp(Resource):
 class RestQuery(Resource):
     def post(self):
         outTar = None
-        with Connection():
-            q = Queue(default_timeout=params['timeout']+10)
-            rp2_pathways_bytes = request.files['rp2_pathways'].read()
-            params = json.load(request.files['data'])
-            #pass the cache parameters to the rpCofactors object
-            async_results = q.enqueue(rp2paths.run,
-                                      rp2_pathways_bytes,
-                                      params['timeout'])
-            result = None
-            while result is None:
-                result = async_results.return_value
-                time.sleep(2.0)
-            #TODO: check that!
-            #make a tar to pass back to the rp2path flask service
-            out_paths = io.BytesIO(result[0])
-            out_compounds = io.BytesIO(result[1])
-            outTar = io.BytesIO()
-            if not return_content==None or not (return_content[0]==b'' and return_content[1]==b''):
-                with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
-                    info = tarfile.TarInfo(name='rp2paths_pathways')
-                    info.size = len(result[0])
-                    tf.addfile(tarinfo=info, fileobj=out_paths)
-                    info = tarfile.TarInfo(name='rp2paths_compounds')
-                    info.size = len(result[1])
-                    tf.addfile(tarinfo=info, fileobj=out_compounds)
-            ###### IMPORTANT ######
-            outTar.seek(0)
-            #######################
-        return send_file(outTar, as_attachment=True, attachment_filename='rp2paths_resuts.tar', mimetype='application/x-tar')
+        conn = Redis()
+        q = Queue('default', connection=conn, default_timeout=params['timeout']+10)
+        rp2_pathways_bytes = request.files['rp2_pathways'].read()
+        params = json.load(request.files['data'])
+        #pass the cache parameters to the rpCofactors object
+        async_results = q.enqueue(run, rp2_pathways_bytes, params['timeout'])
+        result = None
+        while result is None:
+            result = async_results.return_value
+            if async_results.get_status()=='failed':
+                app.logger.error('ERROR: Job failed')
+                raise(400)
+            time.sleep(2.0)
+        if result[2]==b'filenotfounderror':
+            app.logger.error.error('ERROR: FileNotFound Error from rp2paths')
+            raise(400)
+        elif result[2]==b'oserror':
+            app.logger.error.error('ERROR: rp2paths has generated an OS error')
+            raise(400)
+        elif result[2]==b'memerror':
+            app.logger.error.error('ERROR: Memory allocation error')
+            raise(400)
+        elif result[0]==b'' and result[1]==b'':
+            app.logger.error.error('ERROR: Could not find any results by RetroPath2.0')
+            raise(400)
+        elif result[2]==b'valueerror':
+            app.logger.error.error('ERROR: Could not setup a RAM limit')
+            raise(400)
+        outTar = io.BytesIO()
+        if not result==None or not (result[0]==b'' and result[1]==b''):
+            with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
+                #make a tar to pass back to the rp2path flask service
+                out_paths = io.BytesIO(result[0])
+                out_compounds = io.BytesIO(result[1])
+                info = tarfile.TarInfo(name='rp2paths_pathways')
+                info.size = len(result[0])
+                tf.addfile(tarinfo=info, fileobj=out_paths)
+                info = tarfile.TarInfo(name='rp2paths_compounds')
+                info.size = len(result[1])
+                tf.addfile(tarinfo=info, fileobj=out_compounds)
+        ###### IMPORTANT ######
+        outTar.seek(0)
+        #######################
+        return send_file(outTar, as_attachment=True, attachment_filename='rp2paths_result.tar', mimetype='application/x-tar')
 
 
 api.add_resource(RestApp, '/REST')

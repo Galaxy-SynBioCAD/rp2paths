@@ -14,27 +14,29 @@ ENV RP2PATHS_SHA256 3813460dea8bb02df48e1f1dfb60751983297520f09cdfcc62aceda31640
 # which this Docker image does not have.
 # We'll sacrifize space for a duplicate install to get all the dependencies
 # Tip: openjdk-8-jre needed to launch efm
+# debian security updates as conda/miniconda3:latest is seldom updated
 RUN apt-get --quiet update && \
-    # debian security updates as conda/miniconda3:latest is seldom updated
     apt-get --quiet --yes dist-upgrade && \
+    apt-get --quiet --yes install supervisor redis && \
     apt-get --quiet --yes install \
         curl \
         graphviz \
-        openjdk-8-jre
+        openjdk-8-jre 
+
+RUN pip install rq redis
 
 ## Install rest of dependencies as Conda packages
 # Update conda base install in case base Docker image is outdated
-RUN conda update --quiet --yes conda && conda update --all --yes
-
 # Install rdkit first as it has loads of dependencies
 # Check for new versions at
 # https://anaconda.org/rdkit/rdkit/labels
-RUN conda install --quiet --yes --channel rdkit rdkit=2018.03.4.0
-# TODO: are any of these already included from rdkit above?
-RUN conda install --quiet --yes python-graphviz pydotplus lxml 
 # FIXME: Is it pip's image or conda's scikit-image?
 #RUN pip install -y image
 #conda install scikit-image
+RUN conda update --quiet --yes conda && \
+    conda update --all --yes && \
+    conda install -c conda-forge flask-restful && \
+    conda install --quiet --yes python-graphviz pydotplus lxml
 
 
 # Download and "install" rp2paths release
@@ -50,25 +52,15 @@ RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 RUN mkdir /home/data
 RUN mkdir /home/results
 
+WORKDIR /home/
 
-#RUN mv src /opt/rp2paths
-# Patch in #!/ shebang if missing
-# Make it available on PATH
-#RUN ln -s /opt/rp2paths/RP2paths.py /usr/local/bin/RP2paths.py
-#RUN ln -s /opt/rp2paths/RP2paths.py /usr/local/bin/rp2paths
-# Verify the install 
-#RUN rp2paths --help
-# Verify full execution (Note: We're NOT in /opt/rp2paths folder)
-#RUN rp2paths all /opt/rp2paths/examples/violacein/rp2-results.csv --outdir /tmp/1 && ls /tmp/1 && rm -rf /tmp/1
+COPY rp2paths.py /home/
+COPY supervisor.conf /home/
+COPY flask_rq.py /home/
+COPY start.sh /home/
 
-#COPY --from=cwl /usr/share/cwl/rp2paths /usr/share/cwl/rp2paths
-#LABEL org.w3id.cwl.tool /usr/share/cwl/rp2paths/rp2paths.cwl
+RUN chmod +x /home/start.sh
 
-# Default command is to run on /data/rp2-results.csv
-# and output to /data/pathways/
-# /data is a VOLUME so these can more easily be accessed
-# outside the Docker container
-#RUN mkdir /data
-#VOLUME /data
-#WORKDIR /data
-#CMD ["/usr/local/bin/rp2paths", "all", "rp2-results.csv", "--outdir", "pathways/"]
+CMD ["/home/start.sh"]
+
+EXPOSE 8992
