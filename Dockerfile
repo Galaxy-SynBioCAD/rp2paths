@@ -17,13 +17,14 @@ ENV RP2PATHS_SHA256 3813460dea8bb02df48e1f1dfb60751983297520f09cdfcc62aceda31640
 # debian security updates as conda/miniconda3:latest is seldom updated
 RUN apt-get --quiet update && \
     apt-get --quiet --yes dist-upgrade && \
-    apt-get --quiet --yes install supervisor redis && \
     apt-get --quiet --yes install \
+	supervisor \
+	redis-server \
         curl \
-        graphviz \
+        graphviz \ 
+#        libxext6  \
+#        libxrender-dev \
         openjdk-8-jre 
-
-RUN pip install rq redis
 
 ## Install rest of dependencies as Conda packages
 # Update conda base install in case base Docker image is outdated
@@ -33,34 +34,48 @@ RUN pip install rq redis
 # FIXME: Is it pip's image or conda's scikit-image?
 #RUN pip install -y image
 #conda install scikit-image
-RUN conda update --quiet --yes conda && \
-    conda update --all --yes && \
-    conda install -c conda-forge flask-restful && \
-    conda install --quiet --yes python-graphviz pydotplus lxml
+#RUN conda update --quiet --yes conda && \
+#    conda update --all --yes && \
+#    conda install -c conda-forge flask-restful && \
+#    conda install --quiet --yes python-graphviz pydotplus lxml && \
+#    conda install --quiet --yes --channel rdkit rdkit=2018.03.4.0 && \
+#    conda install -c conda-forge rq && \
+#    conda install -c anaconda redis && \
+#    conda install pandas
 
+RUN conda update --quiet --yes conda && conda update --all --yes
+RUN conda install --quiet --yes --channel rdkit rdkit=2018.03.4.0
+RUN conda install --quiet --yes python-graphviz pydotplus lxml 
+RUN conda install -c conda-forge rq
+RUN conda install -c anaconda redis
+RUN conda install -c conda-forge flask-restful
 
 # Download and "install" rp2paths release
-RUN mkdir /home/
-WORKDIR /home/
+WORKDIR /tmp
 RUN echo "$RP2PATHS_SHA256  rp2paths.tar.gz" > rp2paths.tar.gz.sha256
 RUN cat rp2paths.tar.gz.sha256
 RUN echo Downloading $RP2PATHS_URL
 RUN curl -v -L -o rp2paths.tar.gz $RP2PATHS_URL && sha256sum rp2paths.tar.gz && sha256sum -c rp2paths.tar.gz.sha256
-RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /home/
+RUN mkdir /src
+RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /src
+WORKDIR /src
 RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 
-RUN mkdir /home/data
-RUN mkdir /home/results
+#RUN mkdir /home/src
+#RUN mkdir /home/src/data
+RUN mkdir /src/data
+RUN mkdir /src/results
+RUN chmod -R 755 /src/results
 
-WORKDIR /home/
+#VOLUME /src
 
-COPY rp2paths.py /home/
-COPY supervisor.conf /home/
-COPY flask_rq.py /home/
-COPY start.sh /home/
+COPY flask_rq.py /src/
+COPY start.sh /src/
+COPY rp2paths.py /src/
+COPY supervisor.conf /src/
 
-RUN chmod +x /home/start.sh
+RUN chmod +x /src/start.sh
 
-CMD ["/home/start.sh"]
+CMD ["/src/start.sh"]
 
 EXPOSE 8992

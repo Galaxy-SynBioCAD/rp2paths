@@ -3,5 +3,5 @@
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 
-supervisord -c /home/supervisor.conf &
-python /home/flask_rq.py
+supervisord -c /src/supervisor.conf &
+python /src/flask_rq.py
