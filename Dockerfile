@@ -56,4 +56,4 @@ RUN chmod +x /src/start.sh
 
 CMD ["/src/start.sh"]
 
-EXPOSE 8992
+EXPOSE 8888
