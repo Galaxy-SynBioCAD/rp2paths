@@ -12,11 +12,34 @@ import io
 import json
 import time
 import tarfile
+import logging
 
-from rq import Connection, Queue
-from redis import Redis
 
 from rp2paths import run
+
+
+def main(rp2_pathways, timeout):
+    with open(rp2_pathways, 'rb') as rp2_pathways_bytes:
+        result = run(rp2_pathways_bytes, timeout)
+        #app.logger.info(result)
+        if result[2]==b'filenotfounderror':
+            logging.error('ERROR: FileNotFound Error from rp2paths')
+            return False
+        elif result[2]==b'oserror':
+            logging.error('ERROR: rp2paths has generated an OS error')
+            return False
+        elif result[2]==b'memerror':
+            logging.error('ERROR: Memory allocation error')
+            return False
+        elif result[0]==b'' and result[1]==b'':
+            logging.error('ERROR: Could not find any results by RetroPath2.0')
+            return False
+        elif result[2]==b'valueerror':
+            logging.error('ERROR: Could not setup a RAM limit')
+            return False
+        out_paths = io.BytesIO(result[0])
+        out_compounds = io.BytesIO(result[1])
+        return out_paths, out_compounds
 
 
 #######################################################
