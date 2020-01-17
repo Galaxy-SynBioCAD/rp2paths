@@ -51,10 +51,9 @@ RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 RUN mkdir /home/src/
 RUN mkdir /home/src/data
 
-RUN mkdir /src/results
-RUN chmod -R 755 /src/results
 VOLUME /src
 
+COPY rpTool.py /src/
 
 #RUN mv src /opt/rp2paths
 # Patch in #!/ shebang if missing
