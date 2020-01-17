@@ -90,4 +90,6 @@ def main(rp2_pathways_bytes, timeout):
         return b'', b''
     out_paths = io.BytesIO(result[0])
     out_compounds = io.BytesIO(result[1])
+    out_paths.seek(0)
+    out_compounds.seek(0)
     return out_paths, out_compounds

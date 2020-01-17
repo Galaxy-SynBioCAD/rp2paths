@@ -15,9 +15,7 @@ if __name__ == "__main__":
     params = parser.parse_args()
     with open(params.rp2_pathways, 'rb') as rp2_pathways_bytes:
         out_paths, out_compounds = rpTool.main(rp2_pathways_bytes.read(), params.timeout)
-        print(type(out_paths))
-        print(type(out_compounds))
         with open(params.out_paths, 'wb') as o_p:
-            o_p.write(out_paths)
+            shutil.copyfileobj(out_paths, o_p, length=131072)
         with open(params.out_compounds, 'wb') as o_c:
-            o_c.write(out_compounds)
+            shutil.copyfileobj(out_compounds, o_c, length=131072)
