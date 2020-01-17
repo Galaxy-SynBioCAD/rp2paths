@@ -2,7 +2,7 @@
 Created on March 7 2019
 
 @author: Melchior du Lac
-@description: RQ version of RP2paths
+@description: Standalone version of RP2paths. Returns bytes to be able to use the same file in REST application
 
 """
 import subprocess
@@ -76,10 +76,10 @@ def main(rp2_pathways, timeout):
             logging.error('rp2paths has generated an OS error')
             return False
         elif result[2]==b'memerror':
-            logging.error(' Memory allocation error')
+            logging.error('Memory allocation error')
             return False
         elif result[0]==b'' and result[1]==b'':
-            logging.error('Could not find any results by RetroPath2.0')
+            logging.error('Could not find any results')
             return False
         elif result[2]==b'valueerror':
             logging.error('Could not setup a RAM limit')
