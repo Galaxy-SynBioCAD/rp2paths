@@ -13,8 +13,9 @@ if __name__ == "__main__":
     parser.add_argument('-out_compounds', type=str)
     parser.add_argument('-timeout', type=int)
     params = parser.parse_args()
-    out_paths, out_compounds = rpTool.main(params.rp2_pathways, params.timeout)
-    with open(params.out_paths, 'wb') as o_p:
-        o_p.write(out_paths)
-    with open(params.out_compounds, 'wb') as o_c:
-        o_c.write(out_compounds)
+    with open(params.rp2_pathways, 'rb') as rp2_pathways_bytes:
+        out_paths, out_compounds = rpTool.main(rp2_pathways_bytes.read(), params.timeout)
+        with open(params.out_paths, 'wb') as o_p:
+            o_p.write(out_paths)
+        with open(params.out_compounds, 'wb') as o_c:
+            o_c.write(out_compounds)

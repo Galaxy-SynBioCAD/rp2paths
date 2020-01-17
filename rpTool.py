@@ -65,25 +65,24 @@ def run_rp2paths(rp2_pathways_bytes, timeout):
 ##
 #
 #
-def main(rp2_pathways, timeout):
-    with open(rp2_pathways, 'rb') as rp2_pathways_bytes:
-        result = run_rp2paths(rp2_pathways_bytes, timeout)
-        #app.logger.info(result)
-        if result[2]==b'filenotfounderror':
-            logging.error('FileNotFound Error from rp2paths')
-            return False
-        elif result[2]==b'oserror':
-            logging.error('rp2paths has generated an OS error')
-            return False
-        elif result[2]==b'memerror':
-            logging.error('Memory allocation error')
-            return False
-        elif result[0]==b'' and result[1]==b'':
-            logging.error('Could not find any results')
-            return False
-        elif result[2]==b'valueerror':
-            logging.error('Could not setup a RAM limit')
-            return False
-        out_paths = io.BytesIO(result[0])
-        out_compounds = io.BytesIO(result[1])
-        return out_paths, out_compounds
+def main(rp2_pathways_bytes, timeout):
+    result = run_rp2paths(rp2_pathways_bytes, timeout)
+    #app.logger.info(result)
+    if result[2]==b'filenotfounderror':
+        logging.error('FileNotFound Error from rp2paths')
+        return b'', b''
+    elif result[2]==b'oserror':
+        logging.error('rp2paths has generated an OS error')
+        return b'', b''
+    elif result[2]==b'memerror':
+        logging.error('Memory allocation error')
+        return b'', b''
+    elif result[0]==b'' and result[1]==b'':
+        logging.error('Could not find any results')
+        return b'', b''
+    elif result[2]==b'valueerror':
+        logging.error('Could not setup a RAM limit')
+        return b'', b''
+    out_paths = io.BytesIO(result[0])
+    out_compounds = io.BytesIO(result[1])
+    return out_paths, out_compounds
