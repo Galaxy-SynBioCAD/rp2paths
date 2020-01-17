@@ -31,7 +31,7 @@ def run_rp2paths(rp2_pathways_bytes, timeout):
         with open(tmpOutputFolder+'/tmp_rp2_pathways.csv', 'wb') as outfi:
             outfi.write(rp2_pathways_bytes)
         #rp2paths_command = ['python', '/home/RP2paths.py', 'all', rp2_pathways, '--outdir', tmpOutputFolder, '--timeout', str(timeout)]
-        rp2paths_command = 'python /src/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+'/ --timeout '+str(timeout)
+        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+'/ --timeout '+str(timeout)
         try:
             commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
             #commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, preexec_fn=limit_virtual_memory)

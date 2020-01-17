@@ -8,9 +8,11 @@ FROM brsynth/rpbase
 RUN apt-get --quiet --yes install \
         curl \
         graphviz \
-        openjdk-8-jre
+        openjdk-8-jre \
+        libxext6  \
+        libxrender-dev
 
-RUN conda install --quiet --yes --channel rdkit rdkit=2018.03.4.0
+RUN conda install -y -c rdkit rdkit
 RUN conda install --quiet --yes python-graphviz pydotplus lxml
 
 ###### JOAN: this part is docker_compose I geuss, I need it for testing

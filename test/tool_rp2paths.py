@@ -3,7 +3,7 @@
 import argparse
 import shutil
 import sys
-sys.path.insert(0, '/src/')
+sys.path.insert(0, '/home/')
 import rpTool
 
 if __name__ == "__main__":
@@ -15,7 +15,9 @@ if __name__ == "__main__":
     params = parser.parse_args()
     with open(params.rp2_pathways, 'rb') as rp2_pathways_bytes:
         out_paths, out_compounds = rpTool.main(rp2_pathways_bytes.read(), params.timeout)
+        print(type(out_paths))
+        print(type(out_compounds))
         with open(params.out_paths, 'wb') as o_p:
-            o_p.write(out_paths.read())
+            o_p.write(out_paths)
         with open(params.out_compounds, 'wb') as o_c:
-            o_c.write(out_compounds.read())
+            o_c.write(out_compounds)
