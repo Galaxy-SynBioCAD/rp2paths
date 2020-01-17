@@ -47,7 +47,7 @@ def run_rp2paths(rp_results, timeout, tmpOutputFolder):
     except ValueError as e:
         logging.error('Cannot set the RAM usage limit')
         logging.error(e)
-        return b'ramerror', 'Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
+        return b'', b'', b'ramerror', 'Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*'))
     return str.encode(tmpOutputFolder+'/out_paths.csv'), str.encode(tmpOutputFolder+'/compounds.txt'), b'noerror', ''
 
 
@@ -59,4 +59,4 @@ def main(rp_results, out_paths, out_compounds, timeout):
         bytes_out_paths, bytes_out_compounds, status, errorstring = run_rp2paths(rp_results, timeout, tmpOutputFolder)
         shutil.copy2(bytes_out_paths.decode(), out_paths)
         shutil.copy2(bytes_out_compounds.decode(), out_compounds)
-        #see if you need to catch the error
+        #see if you nee`d to catch the error
