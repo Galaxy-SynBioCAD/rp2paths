@@ -16,29 +16,6 @@ import logging
 
 import rpTool
 
-def main(rp2_pathways, timeout):
-    with open(rp2_pathways, 'rb') as rp2_pathways_bytes:
-        result = run(rp2_pathways_bytes, timeout)
-        #app.logger.info(result)
-        if result[2]==b'filenotfounderror':
-            logging.error('ERROR: FileNotFound Error from rp2paths')
-            return False
-        elif result[2]==b'oserror':
-            logging.error('ERROR: rp2paths has generated an OS error')
-            return False
-        elif result[2]==b'memerror':
-            logging.error('ERROR: Memory allocation error')
-            return False
-        elif result[0]==b'' and result[1]==b'':
-            logging.error('ERROR: Could not find any results by RetroPath2.0')
-            return False
-        elif result[2]==b'valueerror':
-            logging.error('ERROR: Could not setup a RAM limit')
-            return False
-        out_paths = io.BytesIO(result[0])
-        out_compounds = io.BytesIO(result[1])
-        return out_paths, out_compounds
-
 
 #######################################################
 ############## REST ###################################
@@ -85,26 +62,16 @@ class RestQuery(Resource):
         params = json.load(request.files['data'])
         result = rpTool.main(rp2_pathways_bytes, params['timeout'])
         #app.logger.info(result)
-        if result[2]==b'filenotfounderror':
-            app.logger.error('FileNotFound Error from rp2paths')
-            raise(400)
-        elif result[2]==b'oserror':
-            app.logger.error('rp2paths has generated an OS error')
-            raise(400)
-        elif result[2]==b'memerror':
-            app.logger.error('Memory allocation error')
-            raise(400)
-        elif result[0]==b'' and result[1]==b'':
+        if result[0]==b'' and result[1]==b'':
             app.logger.error('Could not find any results by RetroPath2.0')
-            raise(400)
-        elif result[2]==b'valueerror':
-            app.logger.error('Could not setup a RAM limit')
             raise(400)
         outTar = io.BytesIO()
         with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
             #make a tar to pass back to the rp2path flask service
-            out_paths = io.BytesIO(result[0])
-            out_compounds = io.BytesIO(result[1])
+            #out_paths = io.BytesIO(result[0])
+            #out_compounds = io.BytesIO(result[1])
+            out_paths = result[0]
+            out_compounds = result[1]
             info = tarfile.TarInfo(name='rp2paths_pathways')
             info.size = len(result[0])
             tf.addfile(tarinfo=info, fileobj=out_paths)

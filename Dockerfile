@@ -5,14 +5,14 @@ FROM brsynth/rprest
 # We'll sacrifize space for a duplicate install to get all the dependencies
 # Tip: openjdk-8-jre needed to launch efm
 # debian security updates as conda/miniconda3:latest is seldom updated
-RUN apt-get --quiet update && \
-    apt-get --quiet --yes dist-upgrade && \
-    apt-get --quiet --yes install \
+RUN apt-get --quiet --yes install \
         curl \
         graphviz \
-        openjdk-8-jre
+        openjdk-8-jre \
+        libxext6  \
+        libxrender-dev
 
-RUN conda install --quiet --yes --channel rdkit rdkit=2018.03.4.0
+RUN conda install -y -c rdkit rdkit
 RUN conda install --quiet --yes python-graphviz pydotplus lxml
 
 ###### JOAN: this part is docker_compose I geuss, I need it for testing
@@ -29,3 +29,5 @@ RUN echo Downloading $RP2PATHS_URL
 RUN curl -v -L -o rp2paths.tar.gz $RP2PATHS_URL && sha256sum rp2paths.tar.gz && sha256sum -c rp2paths.tar.gz.sha256
 RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /home/
 RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
+
+COPY rpTool.py /home/
