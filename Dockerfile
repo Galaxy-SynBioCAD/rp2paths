@@ -29,3 +29,5 @@ RUN echo Downloading $RP2PATHS_URL
 RUN curl -v -L -o rp2paths.tar.gz $RP2PATHS_URL && sha256sum rp2paths.tar.gz && sha256sum -c rp2paths.tar.gz.sha256
 RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /home/
 RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
+
+COPY rpTool.py /home/
