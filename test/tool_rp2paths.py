@@ -16,6 +16,6 @@ if __name__ == "__main__":
     with open(params.rp2_pathways, 'rb') as rp2_pathways_bytes:
         out_paths, out_compounds = rpTool.main(rp2_pathways_bytes.read(), params.timeout)
         with open(params.out_paths, 'wb') as o_p:
-            o_p.write(out_paths)
+            o_p.write(out_paths.read())
         with open(params.out_compounds, 'wb') as o_c:
-            o_c.write(out_compounds)
+            o_c.write(out_compounds.read())
