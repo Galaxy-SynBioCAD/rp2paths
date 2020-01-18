@@ -31,3 +31,4 @@ RUN tar xfv rp2paths.tar.gz && mv rp2paths*/* /home/
 RUN grep -q '^#!/' RP2paths.py || sed -i '1i #!/usr/bin/env python3' RP2paths.py
 
 COPY rpTool.py /home/
+COPY rpToolServe.py /home/

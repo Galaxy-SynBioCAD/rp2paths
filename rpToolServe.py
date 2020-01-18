@@ -6,16 +6,22 @@ Created on March 5 2019
 
 """
 from datetime import datetime
-from flask import Flask, request, jsonify, send_file, abort
+from flask import Flask, request, jsonify, send_file, abort, Response
 from flask_restful import Resource, Api
 import io
 import json
 import time
 import tarfile
 import logging
+import sys
 
 import rpTool
 
+#######################################################
+############## logging ################################
+#######################################################
+
+from logging.handlers import RotatingFileHandler
 
 #######################################################
 ############## REST ###################################
@@ -60,18 +66,24 @@ class RestQuery(Resource):
         outTar = None
         rp2_pathways_bytes = request.files['rp2_pathways'].read()
         params = json.load(request.files['data'])
-        result = rpTool.main(rp2_pathways_bytes, params['timeout'])
-        #app.logger.info(result)
+        result = rpTool.run_rp2paths(rp2_pathways_bytes, params['timeout'], app.logger)
+        if result[2]==b'filenotfounderror':
+            return Response("FileNotFound Error from rp2paths \n "+str(result[3]), status=400)
+        if result[2]==b'oserror':
+            return Response("rp2paths has generated an OS error \n"+str(result[3]), status=400)
+        if result[2]==b'memerror':
+            return Response("Memory allocation error \n"+str(result[3]), status=400)
         if result[0]==b'' and result[1]==b'':
-            app.logger.error('Could not find any results by RetroPath2.0')
-            raise(400)
+            return Response("Could not find any results \n"+str(result[3]), status=400)
+        if result[2]==b'valueerror':
+            return Response("Could not setup a RAM limit \n"+str(result[3]), status=400)
         outTar = io.BytesIO()
         with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
             #make a tar to pass back to the rp2path flask service
-            #out_paths = io.BytesIO(result[0])
-            #out_compounds = io.BytesIO(result[1])
-            out_paths = result[0]
-            out_compounds = result[1]
+            out_paths = io.BytesIO(result[0])
+            out_compounds = io.BytesIO(result[1])
+            #out_paths = result[0]
+            #out_compounds = result[1]
             info = tarfile.TarInfo(name='rp2paths_pathways')
             info.size = len(result[0])
             tf.addfile(tarinfo=info, fileobj=out_paths)
@@ -89,4 +101,8 @@ api.add_resource(RestQuery, '/REST/Query')
 
 
 if __name__== "__main__":
-    app.run(host="0.0.0.0", port=8888, debug=False, threaded=True)
+    handler = RotatingFileHandler('rp2paths.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.DEBUG)
+    app.logger.addHandler(handler)
+    #app.run(host="0.0.0.0", port=8888, debug=False, threaded=True)
+    app.run(host="0.0.0.0", port=8888, debug=True, threaded=True)

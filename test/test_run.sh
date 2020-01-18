@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-docker run -v ${PWD}/test_rp2_pathways.csv:/src/test_rp2_pathways.csv -v ${PWD}/tool_rp2paths.py:/src/tool_rp2paths.py -v ${PWD}/out_results/:/src/out_results/ -v ${PWD}/inside_run.sh:/src/inside_run.sh --rm brsynth/rp2paths /bin/sh /src/inside_run.sh
-
-cp out_results/output_outPaths.csv .
-cp out_results/output_outCompounds.csv .
+#docker run --network host -d -p 8888:8888 --name test_rp2paths brsynth/rp2paths-rest
+docker run -d -p 8888:8888 --name test_rp2paths brsynth/rp2paths-rest
+sleep 10
+python tool_rp2paths.py -rp2_pathways test_rp2_pathways.csv -rp2paths_pathways output_outPaths.csv -rp2paths_compounds output_outCompounds.csv -timeout 18000 -server_url http://0.0.0.0:8888/REST
+docker kill test_rp2paths
+docker rm test_rp2paths
