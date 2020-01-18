@@ -1,12 +1,19 @@
-FROM brsynth/rpbase
+FROM conda/miniconda3
+
+WORKDIR /home/
 
 # Although graphviz is also in conda, it depends on X11 libraries in /usr/lib
 # which this Docker image does not have.
 # We'll sacrifize space for a duplicate install to get all the dependencies
 # Tip: openjdk-8-jre needed to launch efm
 # debian security updates as conda/miniconda3:latest is seldom updated
-RUN apt-get --quiet --yes install \
+RUN apt-get --quiet update && \
+    apt-get --quiet --yes install \
+        ca-certificates \
+        build-essential \
         curl \
+        wget \
+        xz-utils \
         graphviz \
         openjdk-8-jre \
         libxext6  \
