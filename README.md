@@ -12,11 +12,7 @@ Docker implementation of rp2paths
 ##### Build the docker
 
 ```
-docker build -t brsynth/rp2paths .
-```
-
-```
-docker run -p 8992:8992 brsynth/rp2paths
+docker build -t brsynth/rp2paths-standalone .
 ```
 
 ### How to cite rp2paths?
