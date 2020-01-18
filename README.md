@@ -12,7 +12,7 @@ Docker implementation of rp2paths
 ##### Build the docker
 
 ```
-docker build -t brsynth/rp2paths-rest .
+docker build -t brsynth/rp2paths-redis .
 ```
 
 

@@ -5,6 +5,7 @@ Created on March 5 2019
 @description: REST+RQ version of RP2paths
 
 """
+
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file, abort, Response
 from flask_restful import Resource, Api
@@ -14,6 +15,9 @@ import time
 import tarfile
 import logging
 import sys
+
+from rq import Connection, Queue
+from redis import Redis
 
 import rpTool
 
@@ -66,7 +70,18 @@ class RestQuery(Resource):
         outTar = None
         rp2_pathways_bytes = request.files['rp2_pathways'].read()
         params = json.load(request.files['data'])
-        result = rpTool.run_rp2paths(rp2_pathways_bytes, params['timeout'], app.logger)
+        ##### REDIS ##############
+        conn = Redis()
+        q = Queue('default', connection=conn, default_timeout=params['timeout']+10)
+        #pass the cache parameters to the rpCofactors object
+        async_results = q.enqueue(rpTool.run_rp2paths, rp2_pathways_bytes, params['timeout'])
+        result = None
+        while result is None:
+            result = async_results.return_value
+            if async_results.get_status()=='failed':
+                return Response('Job failed', status=400)
+            time.sleep(2.0)
+        ###########################
         if result[2]==b'filenotfounderror':
             return Response("FileNotFound Error from rp2paths \n "+str(result[3]), status=400)
         if result[2]==b'oserror':
@@ -82,8 +97,6 @@ class RestQuery(Resource):
             #make a tar to pass back to the rp2path flask service
             out_paths = io.BytesIO(result[0])
             out_compounds = io.BytesIO(result[1])
-            #out_paths = result[0]
-            #out_compounds = result[1]
             info = tarfile.TarInfo(name='rp2paths_pathways')
             info.size = len(result[0])
             tf.addfile(tarinfo=info, fileobj=out_paths)
@@ -104,5 +117,4 @@ if __name__== "__main__":
     handler = RotatingFileHandler('rp2paths.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.DEBUG)
     app.logger.addHandler(handler)
-    #app.run(host="0.0.0.0", port=8888, debug=False, threaded=True)
     app.run(host="0.0.0.0", port=8888, debug=True, threaded=True)

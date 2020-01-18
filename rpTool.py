@@ -10,6 +10,7 @@ import resource
 import tempfile
 import glob
 import io
+import logging
 
 MAX_VIRTUAL_MEMORY = 20000 * 1024 * 1024 # 20GB -- define what is the best
 #MAX_VIRTUAL_MEMORY = 20 * 1024 * 1024 # 20GB -- define what is the best
@@ -23,7 +24,10 @@ def limit_virtual_memory():
 ##
 #
 #
-def run_rp2paths(rp2_pathways_bytes, timeout, logger):
+def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
+    if logger==None:
+        logging.basicConfig(level=logging.DEBUG)
+        logger = logging.getLogger(__name__)
     out_paths = b''
     out_compounds = b''
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
