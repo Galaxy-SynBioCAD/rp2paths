@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
-import shutil
+#import shutil
+import logging
 import sys
 sys.path.insert(0, '/home/')
 import rpTool
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser('Python wrapper for the python RP2paths script')
@@ -14,8 +18,10 @@ if __name__ == "__main__":
     parser.add_argument('-timeout', type=int)
     params = parser.parse_args()
     with open(params.rp2_pathways, 'rb') as rp2_pathways_bytes:
-        out_paths, out_compounds = rpTool.main(rp2_pathways_bytes.read(), params.timeout)
+        result = rpTool.run_rp2paths(rp2_pathways_bytes.read(), params.timeout, logger)
         with open(params.out_paths, 'wb') as o_p:
-            shutil.copyfileobj(out_paths, o_p, length=131072)
+            #shutil.copyfileobj(result[0], o_p, length=131072)
+            o_p.write(result[0])
         with open(params.out_compounds, 'wb') as o_c:
-            shutil.copyfileobj(out_compounds, o_c, length=131072)
+            #shutil.copyfileobj(result[1], o_c, length=131072)
+            o_c.write(result[1])
