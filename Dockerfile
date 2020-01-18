@@ -15,7 +15,7 @@ RUN apt-get --quiet --yes install \
 RUN conda install -y -c rdkit rdkit
 RUN conda install --quiet --yes python-graphviz pydotplus lxml
 
-###### JOAN: this part is docker_compose I geuss, I need it for testing
+###### JOAN: this part is docker_compose I geuss. for dev I need it for testing
 # Download and "install" rp2paths release
 # Check for new versions from 
 # https://github.com/brsynth/rp2paths/releases
