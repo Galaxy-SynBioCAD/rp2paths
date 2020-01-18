@@ -5,7 +5,6 @@ Created on March 5 2019
 @description: REST+RQ version of RP2paths
 
 """
-
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file, abort, Response
 from flask_restful import Resource, Api
@@ -15,6 +14,7 @@ import time
 import tarfile
 import logging
 import sys
+import time
 
 from rq import Connection, Queue
 from redis import Redis
@@ -40,7 +40,7 @@ api = Api(app)
 #
 #
 def stamp(data, status=1):
-    appinfo = {'app': 'RetroPath2.0', 'version': '8.0',
+    appinfo = {'app': 'RP2paths', 'version': '8.0',
                'author': 'Melchior du Lac',
                'organization': 'BRS',
                'time': datetime.now().isoformat(),
@@ -72,16 +72,18 @@ class RestQuery(Resource):
         params = json.load(request.files['data'])
         ##### REDIS ##############
         conn = Redis()
-        q = Queue('default', connection=conn, default_timeout=params['timeout']+10)
+        q = Queue('default', connection=conn, default_timeout='24h')
         #pass the cache parameters to the rpCofactors object
         async_results = q.enqueue(rpTool.run_rp2paths, rp2_pathways_bytes, params['timeout'])
         result = None
         while result is None:
             result = async_results.return_value
+            app.logger.info(async_results.return_value)
+            app.logger.info(async_results.get_status())
             if async_results.get_status()=='failed':
-                return Response('Job failed', status=400)
+                return Response('Job failed \n '+str(result), status=400)
             time.sleep(2.0)
-        ###########################
+        ########################### 
         if result[2]==b'filenotfounderror':
             return Response("FileNotFound Error from rp2paths \n "+str(result[3]), status=400)
         if result[2]==b'oserror':
@@ -117,4 +119,4 @@ if __name__== "__main__":
     handler = RotatingFileHandler('rp2paths.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.DEBUG)
     app.logger.addHandler(handler)
-    app.run(host="0.0.0.0", port=8888, debug=True, threaded=True)
+    app.run(host="0.0.0.0", port=8888, debug=False, threaded=True)

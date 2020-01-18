@@ -15,6 +15,9 @@ Docker implementation of rp2paths
 docker build -t brsynth/rp2paths-redis .
 ```
 
+```
+docker run -p 8888:8888 brsynth/rp2paths-redis
+```
 
 ### How to cite rp2paths?
 Please cite:
