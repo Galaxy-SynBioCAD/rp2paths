@@ -19,9 +19,10 @@ RUN apt-get --quiet update && \
         libxext6  \
         libxrender-dev
 
+RUN conda install -y -c rdkit rdkit
 RUN conda update -n base -c defaults conda
 RUN conda install -c conda-forge flask-restful
-RUN conda install -y -c rdkit rdkit
+#RUN conda install -y -c rdkit/label/attic rdkit
 RUN conda install --quiet --yes python-graphviz pydotplus lxml
 
 ###### JOAN: this part is docker_compose I geuss, I need it for testing
