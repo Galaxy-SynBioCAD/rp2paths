@@ -1,22 +1,22 @@
 # rp2paths
 
-RP2paths extracts the set of pathways that lies in a metabolic space file outputed by the RetroPath2.0 workflow. Source code may be found at the following location: [myExperiment.org](https://www.myexperiment.org/workflows/4987.html).
+RP2paths extracts the set of pathways that lies in a metabolic space file output by the RetroPath2.0 workflow. Source code may be found at the following location: [GitHub](https://github.com/brsynth/rp2paths).
 
 ## Information Flow
 
 ### Input
 
 Required information: 
-    * RetroPath2.0 list of pathways CSV file output.
+* **ReatroPath2.0 Pathways**: List of pathways
 
 Advanced options: 
-    * TimeOut: (default: 1800 seconds) Time out of the tool
-    * Server URL: IP address of the rp2paths REST service
+* **TimeOut**: (default: 1800 seconds) Time out of the tool
+* **Server URL**: IP address of the rp2paths REST service
 
 ### Output
 
-* RP2paths Pathways: describing all the indiviudal enumerated pathways that produce the compound of interest.
-* RP2paths Compounds: describes the structure of all the chemical species involved in all the individual pathways.
+* **RP2paths Pathways**: describes all the indiviudal enumerated pathways that produce the compound of interest.
+* **RP2paths Compounds**: describes the structure of all the chemical species involved in all pathways.
 
 ## Installing
 
@@ -29,7 +29,7 @@ docker build -t brsynth/rp2paths-redis:dev .
 The REST service may be started on the localhost with the following command:
 
 ```
-docker run -p 8887:8888 brsynth/rp2paths-redis
+docker run -p 8887:8888 brsynth/rp2paths-redis:dev
 ```
 
 ### Prerequisites
