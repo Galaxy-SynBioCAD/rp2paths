@@ -36,6 +36,7 @@ def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
             outfi.write(rp2_pathways_bytes)
         rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout*60.0+10.0))
         try:
+            commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
             #commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, preexec_fn=limit_virtual_memory)
             try:
                 commandObj.wait(timeout=timeout*60.0)
