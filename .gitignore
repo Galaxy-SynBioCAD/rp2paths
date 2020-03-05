@@ -1,4 +1,2 @@
 *.swp
-test/out_results/
-test/output_outCompounds.csv
-test/output_outPaths.csv
+test/
