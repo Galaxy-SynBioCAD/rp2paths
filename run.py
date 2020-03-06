@@ -46,8 +46,8 @@ def main(rp_results, out_paths, out_compounds, timeout):
                 auto_remove=True, 
                 detach=False, 
                 volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
-        shutil.copy(tmpOutputFolder+'/out_paths.csv', os.getcwd()+'/'+out_paths)
-        shutil.copy(tmpOutputFolder+'/out_compounds.csv', os.getcwd()+'/'+out_compounds)
+        shutil.copy(tmpOutputFolder+'/out_paths.csv', out_paths)
+        shutil.copy(tmpOutputFolder+'/out_compounds.csv', out_compounds)
 
 
 ##

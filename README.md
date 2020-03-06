@@ -18,7 +18,7 @@ docker build -t brsynth/rp2paths-standalone:dev .
 To test run the following command:
 
 ```
-python run.py -rp_results test/rp_pathways.csv -out_paths test/out_paths.csv -out_compounds test/out_compounds.csv -timeout 30
+python run.py -rp_results test/rp_pathways.csv -out_paths test/out_paths.csv -out_compounds test/out_compounds.csv
 ```
 
 ### How to cite rp2paths?
