@@ -1,25 +1,45 @@
 # rp2paths docker 
 
-* Docker image: [ibisba/rp2paths](https://hub.docker.com/r/ibisba/rp2paths/)
-* Base images: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3/dockerfile)
+* Docker image: [brsynth/rp2paths](https://hub.docker.com/r/brsynth/rp2paths-standalone/)
 
-Docker implementation of rp2paths
+Docker implementation of the rp2paths pathway enumeration pathway.
 
-### Quick start
+### Build the docker
 
-### Local docker
-
-##### Build the docker
+To build the docker from the DockerFile, in the root folder of the project run the following command:o
 
 ```
 docker build -t brsynth/rp2paths-standalone:dev .
 ```
 
-To test run the following command:
+#### Running the test
+
+To test extract the test.tar.xz archive and run the following command in the 
 
 ```
 python run.py -rp_results test/rp_pathways.csv -out_paths test/out_paths.csv -out_compounds test/out_compounds.csv
 ```
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+Version 0.1
+
+## Authors
+
+* **Melchior du Lac**
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Thomas Duigou
+* Joan Hérisson
 
 ### How to cite rp2paths?
 Please cite:
