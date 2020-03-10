@@ -13,7 +13,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser('Python wrapper for the python RP2paths script')
     parser.add_argument('-rp_results', type=str)
     parser.add_argument('-out_paths', type=str)
-    parser.add_argument('-timeout', type=int)
+    parser.add_argument('-timeout', type=int, default=30)
     parser.add_argument('-out_compounds', type=str)
     params = parser.parse_args()
     result = rpTool.run_rp2paths(open(params.rp_results, 'rb').read(), params.timeout)
