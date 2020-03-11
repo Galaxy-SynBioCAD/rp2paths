@@ -10,7 +10,7 @@ Required:
 * **-rp_results**: (string) Path to the output of RetroPath2.0 
 
 Advanced options:
-* **-timeout'**: (integer, default=30) Timeout of the tool in minutes
+* **-timeout**: (integer, default=30) Timeout of the tool in minutes
 
 ## Output
 
