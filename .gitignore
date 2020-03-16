@@ -1,6 +1,4 @@
 *.swp
-test/output_outCompounds.csv
-test/output_outPaths.csv
-test/out_results/
+test/
 rp2paths-1.0.2/
 rp2paths.tar.gz
