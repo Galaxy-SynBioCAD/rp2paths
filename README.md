@@ -1,48 +1,42 @@
-# rp2paths
+# rp2paths docker
+
+* Docker image: [brsynth/retroapth2-redis](https://hub.docker.com/r/brsynth/retropath2-redis)
 
 RP2paths extracts the set of pathways that lies in a metabolic space file output by the RetroPath2.0 workflow. Source code may be found at the following location: [GitHub](https://github.com/brsynth/rp2paths).
 
-## Information Flow
-
-### Input
+## Input
 
 Required information: 
-* **ReatroPath2.0 Pathways**: List of pathways
+* **rp_results**: (string) Path to the ReatroPath2.0 pathways file
 
 Advanced options: 
-* **TimeOut**: (default: 1800 seconds) Time out of the tool
-* **Server URL**: IP address of the rp2paths REST service
+* **timeout**: (string, default: 30 minutes) Time out time of the tool
+* **server_url**: (string) IP address of the rp2paths REST service
 
-### Output
+## Output
 
-* **RP2paths Pathways**: describes all the indiviudal enumerated pathways that produce the compound of interest.
-* **RP2paths Compounds**: describes the structure of all the chemical species involved in all pathways.
+* **out_paths**: (string) Path to the RP2paths pathways. Describes all the indiviudal enumerated pathways that produce the compound of interest.
+* **out_compounds**: (string) Path to the RP2paths Compounds. Describes the structure of all the chemical species involved in all pathways.
 
-## Installing
+## Building the docker
 
-Compile the docker using the Dockerfile using the following command:
+To build the docker, please run the following command in the project root folder:
 
 ```
 docker build -t brsynth/rp2paths-redis:dev .
 ```
 
-The REST service may be started on the localhost with the following command:
+## Dependencies
 
-```
-docker run -p 8887:8888 brsynth/rp2paths-redis:dev
-```
-
-### Prerequisites
-
-* Docker - [Install](https://docs.docker.com/v17.09/engine/installation/)
+* Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3)
 
 ## Contributing
 
-TODO
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
-Version 0.1
+v0.1
 
 ## Authors
 
