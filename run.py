@@ -66,5 +66,8 @@ if __name__ == "__main__":
     parser.add_argument('-out_paths', type=str)
     parser.add_argument('-out_compounds', type=str)
     parser.add_argument('-timeout', type=int, default=30)
+    if params.timeout<0:
+        logging.error('Timeout cannot be <0 :'+str(params.timeout))
+        exit(1)
     params = parser.parse_args()
     main(params.rp_results, params.out_paths, params.out_compounds, params.timeout)
