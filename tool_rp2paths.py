@@ -16,6 +16,9 @@ if __name__ == "__main__":
     parser.add_argument('-timeout', type=int, default=30)
     parser.add_argument('-out_compounds', type=str)
     params = parser.parse_args()
+    if params.timeout<0:
+        logging.error('Timeout cannot be <0 :'+str(params.timeout))
+        exit(1)
     result = rpTool.run_rp2paths(open(params.rp_results, 'rb').read(), params.timeout)
     if result[0]==b'':
         logging.error('Empty results')

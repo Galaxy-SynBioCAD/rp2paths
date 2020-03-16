@@ -41,13 +41,20 @@ def main(rp_results, out_paths, out_compounds, timeout):
                    '/home/tmp_output/out_paths.csv',
                    '-timeout',
                    str(timeout)]
-        docker_client.containers.run(image_str, 
-                command, 
-                auto_remove=True, 
-                detach=False, 
-                volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
+        container = docker_client.containers.run(image_str, 
+                                                 command, 
+                                                 detach=True,
+                                                 stderr=True,
+                                                 volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
+        container.wait()
+        err = container.logs(stdout=False, stderr=True)
+        print(err)
         shutil.copy(tmpOutputFolder+'/out_paths.csv', out_paths)
         shutil.copy(tmpOutputFolder+'/out_compounds.csv', out_compounds)
+        container.remove()
+
+
+
 
 
 ##
