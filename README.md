@@ -26,6 +26,20 @@ To build the docker, please run the following command in the project root folder
 docker build -t brsynth/rp2paths-redis:dev .
 ```
 
+To run the rest/redis service:
+
+```
+docker run docker run -p 8888:8888 brsynth/rp2paths-redis:dev
+```
+
+### Running the tests
+
+To run the test, first untar the test.tar.xz folder and run the following command:
+
+```
+python tool_rp2paths.py -rp2_pathways test/rp2_pathways.csv -rp2paths_pathways test/out_paths.csv -rp2paths_compounds test/out_compounds.csv -server_url http://0.0.0.0:8888/REST
+```
+
 ## Dependencies
 
 * Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3)
