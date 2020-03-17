@@ -29,7 +29,7 @@ docker build -t brsynth/rp2paths-redis .
 To run the rest/redis service:
 
 ```
-docker run docker run -p 8888:8888 brsynth/rp2paths-redis:dev
+docker run docker run -p 8888:8888 brsynth/rp2paths-redis
 ```
 
 ### Running the tests
