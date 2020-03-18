@@ -1,4 +1,4 @@
-# rp2paths docker 
+# rp2paths
 
 * Docker image: [brsynth/rp2paths](https://hub.docker.com/r/brsynth/rp2paths-standalone)
 
@@ -17,6 +17,10 @@ Advanced options:
 * **-out_paths**: (string) Path to the metabolic pathways calculated
 * **-out_compounds**: (string) Path to the compounds in the calculated pathways
 
+## Dependencies
+
+* Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3/dockerfile)
+
 ## Building the docker
 
 To build the docker, please run the following command command in the project root folder:
@@ -32,10 +36,6 @@ To test the docker, untar the test.tar.xz file and run the following command:
 ```
 python run.py -rp_results test/rp_pathways.csv -out_paths test/out_paths.csv -out_compounds test/out_compounds.csv
 ```
-
-## Dependencies
-
-* Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3/dockerfile)
 
 ## Contributing
 
