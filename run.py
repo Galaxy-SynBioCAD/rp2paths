@@ -19,7 +19,7 @@ import docker
 #
 def main(rp_results, out_paths, out_compounds, timeout):
     docker_client = docker.from_env()
-    image_str = 'brsynth/rp2paths-standalone:dev'
+    image_str = 'brsynth/rp2paths-standalone'
     try:
         image = docker_client.images.get(image_str)
     except docker.errors.ImageNotFound:

@@ -26,7 +26,7 @@ Advanced options:
 To build the docker, please run the following command command in the project root folder:
 
 ```
-docker build -t brsynth/rp2paths-standalone:dev .
+docker build -t brsynth/rp2paths-standalone .
 ```
 
 ### Running the test
