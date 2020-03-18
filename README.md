@@ -1,4 +1,4 @@
-# rp2paths docker
+# rp2paths
 
 * Docker image: [brsynth/retroapth2-redis](https://hub.docker.com/r/brsynth/retropath2-redis)
 
@@ -17,6 +17,10 @@ Advanced options:
 
 * **out_paths**: (string) Path to the RP2paths pathways. Describes all the indiviudal enumerated pathways that produce the compound of interest.
 * **out_compounds**: (string) Path to the RP2paths Compounds. Describes the structure of all the chemical species involved in all pathways.
+
+## Dependencies
+
+* Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3)
 
 ## Building the docker
 
@@ -39,10 +43,6 @@ To run the test, first untar the test.tar.xz folder and run the following comman
 ```
 python tool_rp2paths.py -rp2_pathways test/rp2_pathways.csv -rp2paths_pathways test/out_paths.csv -rp2paths_compounds test/out_compounds.csv -server_url http://0.0.0.0:8888/REST
 ```
-
-## Dependencies
-
-* Base docker image: [conda/miniconda3](https://hub.docker.com/r/conda/miniconda3)
 
 ## Contributing
 
