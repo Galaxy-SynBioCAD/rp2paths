@@ -13,11 +13,12 @@ import logging
 import shutil
 import docker
 
+import glob
 
 ##
 #
 #
-def main(rp_results, out_paths, out_compounds, timeout):
+def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout):
     docker_client = docker.from_env()
     image_str = 'brsynth/rp2paths-standalone:dev'
     try:
@@ -31,14 +32,15 @@ def main(rp_results, out_paths, out_compounds, timeout):
             logging.error('Cannot pull image: '+str(image_str))
             exit(1)
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
-        shutil.copy(rp_results, tmpOutputFolder+'/rp_results.csv')
-        command = ['/home/tool_rp2paths.py',
-                   '-rp_results',
-                   '/home/tmp_output/rp_results.csv',
-                   '-out_compounds',
-                   '/home/tmp_output/out_compounds.csv',
-                   '-out_paths',
-                   '/home/tmp_output/out_paths.csv',
+        shutil.copy(rp_pathways, tmpOutputFolder+'/rp_pathways.csv')
+        command = ['python',
+                   '/home/tool_rp2paths.py',
+                   '-rp_pathways',
+                   '/home/tmp_output/rp_pathways.csv',
+                   '-rp2paths_compounds',
+                   '/home/tmp_output/rp2paths_compounds.csv',
+                   '-rp2paths_pathways',
+                   '/home/tmp_output/rp2paths_pathways.csv',
                    '-timeout',
                    str(timeout)]
         container = docker_client.containers.run(image_str, 
@@ -48,9 +50,8 @@ def main(rp_results, out_paths, out_compounds, timeout):
                                                  volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
         container.wait()
         err = container.logs(stdout=False, stderr=True)
-        print(err)
-        shutil.copy(tmpOutputFolder+'/out_paths.csv', out_paths)
-        shutil.copy(tmpOutputFolder+'/out_compounds.csv', out_compounds)
+        shutil.copy(tmpOutputFolder+'/rp2paths_pathways.csv', rp2paths_pathways)
+        shutil.copy(tmpOutputFolder+'/rp2paths_compounds.csv', rp2paths_compounds)
         container.remove()
 
 
@@ -62,12 +63,12 @@ def main(rp_results, out_paths, out_compounds, timeout):
 #
 if __name__ == "__main__":
     parser = argparse.ArgumentParser('Enumerate the individual pathways from the results of Retropath2')
-    parser.add_argument('-rp_results', type=str)
-    parser.add_argument('-out_paths', type=str)
-    parser.add_argument('-out_compounds', type=str)
+    parser.add_argument('-rp_pathways', type=str)
+    parser.add_argument('-rp2paths_pathways', type=str)
+    parser.add_argument('-rp2paths_compounds', type=str)
     parser.add_argument('-timeout', type=int, default=30)
+    params = parser.parse_args()
     if params.timeout<0:
         logging.error('Timeout cannot be <0 :'+str(params.timeout))
         exit(1)
-    params = parser.parse_args()
-    main(params.rp_results, params.out_paths, params.out_compounds, params.timeout)
+    main(params.rp_pathways, params.rp2paths_pathways, params.rp2paths_compounds, params.timeout)

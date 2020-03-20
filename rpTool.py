@@ -24,22 +24,21 @@ def limit_virtual_memory():
 ##
 #
 #
-def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
+def run_rp2paths(rp2_pathways, timeout, logger=None):
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
     out_paths = b''
     out_compounds = b''
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
-        rp2_pathways = tmpOutputFolder+'/tmp_rp2_pathways.csv'
-        with open(tmpOutputFolder+'/tmp_rp2_pathways.csv', 'wb') as outfi:
-            outfi.write(rp2_pathways_bytes)
-        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout*60.0+10.0))
+        timeout_rst = int(timeout*60.0+10.0)
+        if timeout>120:
+            timeout_rest = 120
+        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout_rest*60.0))
         try:
             commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
-            #commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, preexec_fn=limit_virtual_memory)
             try:
-                commandObj.wait(timeout=timeout*60.0)
+                commandObj.wait(timeout=timeout_rest*60.0)
             except subprocess.TimeoutExpired as e:
                 logger.error('Timeout from rp2paths ('+str(timeout)+' minutes)')
                 commandObj.kill()
@@ -66,4 +65,4 @@ def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
             return b'', b'', b'oserror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
         except ValueError as e:
             logger.error('Cannot set the RAM usage limit')
-            return b'', b'', b'valueerror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
+            return b'', b'', b'ramerror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
