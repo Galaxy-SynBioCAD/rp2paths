@@ -29,12 +29,12 @@ To build the docker, please run the following command command in the project roo
 docker build -t brsynth/rp2paths-standalone .
 ```
 
-### Running the test
+#### Running the test
 
 To test the docker, untar the test.tar.xz file and run the following command:
 
 ```
-python run.py -rp_results test/rp_pathways.csv -out_paths test/out_paths.csv -out_compounds test/out_compounds.csv
+python run.py -rp_pathways test/rp_pathways.csv -rp2paths_pathways test/out_paths.csv -rp2paths_compounds test/out_compounds.csv
 ```
 
 ## Contributing
@@ -47,7 +47,6 @@ v1.1.0
 
 ## Authors
 
-* **Melchior du Lac**
 * **Thomas Duigou**
 * Joan Hérisson
 

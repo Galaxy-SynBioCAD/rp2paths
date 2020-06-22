@@ -31,7 +31,7 @@ def run_rp2paths(rp2_pathways, timeout, logger=None):
     out_paths = b''
     out_compounds = b''
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
-        timeout_rst = int(timeout*60.0+10.0)
+        timeout_rest = int(timeout*60.0+10.0)
         if timeout>120:
             timeout_rest = 120
         rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout_rest*60.0))
