@@ -12,6 +12,14 @@ import glob
 import io
 import logging
 
+
+logging.basicConfig(
+    #level=logging.DEBUG,
+    level=logging.WARNING,
+    format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S',
+)
+
 MAX_VIRTUAL_MEMORY = 20000 * 1024 * 1024 # 20GB -- define what is the best
 #MAX_VIRTUAL_MEMORY = 20 * 1024 * 1024 # 20GB -- define what is the best
 

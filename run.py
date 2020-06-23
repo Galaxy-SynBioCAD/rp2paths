@@ -51,10 +51,11 @@ def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout):
         container.wait()
         err = container.logs(stdout=False, stderr=True)
         err_str = err.decode('utf-8')
-        print(err_str)
         if not 'ERROR' in err_str:
             shutil.copy(tmpOutputFolder+'/rp2paths_pathways.csv', rp2paths_pathways)
             shutil.copy(tmpOutputFolder+'/rp2paths_compounds.csv', rp2paths_compounds)
+        else:
+            print(err_str)
         container.remove()
 
 
