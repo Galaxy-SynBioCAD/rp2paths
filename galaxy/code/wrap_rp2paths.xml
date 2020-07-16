@@ -4,15 +4,15 @@
     <container type="docker">brsynth/rp2paths-standalone</container>
   </requirements>
   <command><![CDATA[
-    '$__tool_directory__/tool_rp2paths.py' -rp_results '$rp_results' -out_paths '$out_paths' -out_compounds '$out_compounds' -timeout '$timeout'
+    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout'
   ]]></command>
   <inputs>
-    <param name="rp_results" type="data" format="csv" label="RetroPath2.0 Pathways" />
+    <param name="rp_pathways" type="data" format="csv" label="RetroPath2.0 Pathways" />
     <param name="timeout" type="integer" value="30" label="Time Out (minutes)" />
   </inputs>
   <outputs>
-    <data name="out_paths" format="csv" label="RP2Paths Pathways" />
-    <data name="out_compounds" format="tsv" label="RP2paths Compounds" />
+    <data name="rp2paths_pathways" format="csv" label="RP2Paths Pathways" />
+    <data name="rp2paths_compounds" format="tsv" label="RP2paths Compounds" />
   </outputs>
 	<stdio>
     <regex match="ERROR:" level="error" />
@@ -24,7 +24,7 @@
 	</stdio>
   <tests>
     <test>
-      <param name="rp_results" value="examples/carotene/rp2-results.csv" />
+      <param name="rp_pathways" value="examples/carotene/rp2-results.csv" />
       <param name="timeout" value="900" />
     </test>
   </tests>
@@ -43,7 +43,7 @@ Input
 Required:
 
 
-* **-rp_results**\ : (string) Path to the output of RetroPath2.0 
+* **-rp_pathways**\ : (string) Path to the output of RetroPath2.0 
 
 Advanced options:
 
@@ -54,8 +54,8 @@ Output
 ------
 
 
-* **-out_paths**\ : (string) Path to the metabolic pathways calculated
-* **-out_compounds**\ : (string) Path to the compounds in the calculated pathways
+* **-rp2paths_pathways**\ : (string) Path to the metabolic pathways calculated
+* **-rp2paths_compounds**\ : (string) Path to the compounds in the calculated pathways
 
 Version
 -------
