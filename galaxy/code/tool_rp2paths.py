@@ -15,11 +15,12 @@ if __name__ == "__main__":
     parser.add_argument('-rp2paths_pathways', type=str)
     parser.add_argument('-timeout', type=int, default=30)
     parser.add_argument('-rp2paths_compounds', type=str)
+    parser.add_argument('-max_steps', type=int, default=0)
     params = parser.parse_args()
     if params.timeout<0:
         logging.error('Timeout cannot be <0 :'+str(params.timeout))
         exit(1)
-    result = rpTool.run_rp2paths(params.rp_pathways, params.timeout)
+    result = rpTool.run_rp2paths(params.rp_pathways, params.timeout, params.max_steps)
     if result[2]==b'filenotfounderror':
         logging.error('File not found')
         exit(1)

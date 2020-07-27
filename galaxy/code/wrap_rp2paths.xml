@@ -4,11 +4,14 @@
     <container type="docker">brsynth/rp2paths-standalone</container>
   </requirements>
   <command><![CDATA[
-    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout'
+    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout' -max_steps '$adv.max_steps'
   ]]></command>
   <inputs>
     <param name="rp_pathways" type="data" format="csv" label="RetroPath2.0 Pathways" />
     <param name="timeout" type="integer" value="30" label="Time Out (minutes)" />
+    <section name="adv" title="Advanced Options" expanded="false">
+      <param name="max_steps" type="integer" value="0" label="Maximal of steps for an output pathway" />
+    </section>
   </inputs>
   <outputs>
     <data name="rp2paths_pathways" format="csv" label="RP2Paths Pathways" />
