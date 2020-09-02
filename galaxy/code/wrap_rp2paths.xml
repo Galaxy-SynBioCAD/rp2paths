@@ -4,8 +4,8 @@
 		<requirement type="package">requests</requirement>
   </requirements>
 	<stdio>
-		<regex match="ERROR:" level="error" />
-		<regex match="WARNING:" level="warning" />
+		<regex match="ERROR" level="error" source="both"/>
+		<regex match="WARNING" level="warning" source="both"/>
 	</stdio>
   <command detect_errors="exit_code"><![CDATA[
     '$__tool_directory__/tool_rp2paths.py' -rp2_pathways '$rp2_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$adv.timeout' -server_url '$adv.server_url'
