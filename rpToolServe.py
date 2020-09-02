@@ -90,15 +90,18 @@ class RestQuery(Resource):
         elif result[2]==b'oserror':
             app.logger.error("rp2paths has generated an OS error \n"+str(result[3]))
             return Response("rp2paths has generated an OS error \n"+str(result[3]), status=500)
-        elif result[2]==b'memerror':
-            app.logger.error("Memory allocation error \n"+str(result[3]))
-            return Response("Memory allocation error \n"+str(result[3]), status=500)
-        elif result[2]==b'valueerror':
+        elif result[2]==b'memoryerror':
+            app.logger.error("rp2paths does not have sufficient memory to continue \n"+str(result[3]))
+            return Response("rp2paths does not have sufficient memory to continue \n"+str(result[3]), status=403)
+        elif result[2]==b'ramerror':
             app.logger.error("Could not setup a RAM limit \n"+str(result[3]))
             return Response("Could not setup a RAM limit \n"+str(result[3]), status=500)
+        elif result[2]==b'timeout':
+            app.logger.error("rp2paths has reached its timeout limit, try to increase it \n"+str(result[3]))
+            return Response("rp2paths has reached its timeout limit \n"+str(result[3]), status=408)
         if result[0]==b'' and result[1]==b'':
-            app.logger.error("Could not find any results \n"+str(result[3]))
-            return Response("Could not find any results \n"+str(result[3]), status=400)
+            app.logger.error("rp2paths has not found any results and returns empty files \n"+str(result[3]))
+            return Response("rp2paths has not found any results and returns empty files \n"+str(result[3]), status=400)
         outTar = io.BytesIO()
         with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
             #make a tar to pass back to the rp2path flask service
@@ -113,7 +116,7 @@ class RestQuery(Resource):
         ###### IMPORTANT ######
         outTar.seek(0)
         #######################
-        send_file(outTar, as_attachment=True, attachment_filename='rp2paths_result.tar', mimetype='application/x-tar')
+        return send_file(outTar, as_attachment=True, attachment_filename='rp2paths_result.tar', mimetype='application/x-tar')
 
 
 
