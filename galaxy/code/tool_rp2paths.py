@@ -14,8 +14,12 @@ def rp2pathsUpload(rp2_pathways, rp2paths_pathways, rp2paths_compounds, timeout,
     data = {'timeout': timeout}
     files = {'rp2_pathways': open(rp2_pathways, 'rb'),
             'data': ('data.json', json.dumps(data))}
-    r = requests.post(server_url+'/Query', files=files)
-    r.raise_for_status()
+    try:
+        r = requests.post(server_url+'/Query', files=files)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        logging.error(r.text)
+        return False
     return_content = r.content
     filelike = io.BytesIO(return_content)
     with tarfile.open(fileobj=filelike, mode='r:xz') as tf:

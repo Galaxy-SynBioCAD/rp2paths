@@ -85,15 +85,20 @@ class RestQuery(Resource):
             time.sleep(2.0)
         ########################### 
         if result[2]==b'filenotfounderror':
-            return Response("FileNotFound Error from rp2paths \n "+str(result[3]), status=400)
-        if result[2]==b'oserror':
-            return Response("rp2paths has generated an OS error \n"+str(result[3]), status=400)
-        if result[2]==b'memerror':
-            return Response("Memory allocation error \n"+str(result[3]), status=400)
+            app.logger.error("FileNotFound Error from rp2paths \n "+str(result[3]))
+            return Response("FileNotFound Error from rp2paths \n "+str(result[3]), status=500)
+        elif result[2]==b'oserror':
+            app.logger.error("rp2paths has generated an OS error \n"+str(result[3]))
+            return Response("rp2paths has generated an OS error \n"+str(result[3]), status=500)
+        elif result[2]==b'memerror':
+            app.logger.error("Memory allocation error \n"+str(result[3]))
+            return Response("Memory allocation error \n"+str(result[3]), status=500)
+        elif result[2]==b'valueerror':
+            app.logger.error("Could not setup a RAM limit \n"+str(result[3]))
+            return Response("Could not setup a RAM limit \n"+str(result[3]), status=500)
         if result[0]==b'' and result[1]==b'':
+            app.logger.error("Could not find any results \n"+str(result[3]))
             return Response("Could not find any results \n"+str(result[3]), status=400)
-        if result[2]==b'valueerror':
-            return Response("Could not setup a RAM limit \n"+str(result[3]), status=400)
         outTar = io.BytesIO()
         with tarfile.open(fileobj=outTar, mode='w:xz') as tf:
             #make a tar to pass back to the rp2path flask service
@@ -108,7 +113,8 @@ class RestQuery(Resource):
         ###### IMPORTANT ######
         outTar.seek(0)
         #######################
-        return send_file(outTar, as_attachment=True, attachment_filename='rp2paths_result.tar', mimetype='application/x-tar')
+        send_file(outTar, as_attachment=True, attachment_filename='rp2paths_result.tar', mimetype='application/x-tar')
+
 
 
 api.add_resource(RestApp, '/REST')
