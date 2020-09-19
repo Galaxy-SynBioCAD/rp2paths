@@ -44,7 +44,7 @@ def run_rp2paths(rp2_pathways, timeout, max_steps=0, max_paths=150, unfold_compo
             timeout_rest = 120
         rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout*60.0))+' --max_steps '+str(max_steps)+' --maxpaths '+str(max_paths)+' --unfold_compounds '+str(unfold_compounds)
         try:
-            commandObj = subprocess.Popen(rp2paths_command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE preexec_fn=limit_virtual_memory)
+            commandObj = subprocess.Popen(rp2paths_command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=limit_virtual_memory)
             try:
                 result, error = commandObj.communicate(timeout=timeout*60.0+10.0)
             except subprocess.TimeoutExpired as e:
