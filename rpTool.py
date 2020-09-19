@@ -45,15 +45,13 @@ def run_rp2paths(rp2_pathways, timeout, logger=None):
             commandObj = subprocess.Popen(rp2paths_command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=limit_virtual_memory)
             result = b''
             error = b''
-            try:
-                result, error = commandObj.communicate()
-            except subprocess.TimeoutExpired as e:
-                logger.error('Timeout from of ('+str(timeout)+' minutes)')
-                commandObj.kill()
-                return b'', b'', b'timeout', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpfolder: '+str(glob.glob(tmpfolder+'/*')))
+            result, error = commandObj.communicate()
             result = result.decode('utf-8')
             error = error.decode('utf-8')
             #TODO test to see what is the correct phrase
+            if 'TIMEOUT' in result:
+                logger.error('Timeout from of ('+str(timeout)+' minutes)')
+                return b'', b'', b'timeout', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpfolder: '+str(glob.glob(tmpfolder+'/*')))
             if 'failed to map segment from shared object' in error:
                 logger.error('RP2paths does not have sufficient memory to continue')
                 return b'', b'', b'memoryerror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(error)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
