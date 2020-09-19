@@ -3,14 +3,20 @@
   <requirements>
     <container type="docker">brsynth/rp2paths-standalone</container>
   </requirements>
+  <stdio>
+    <regex match="WARNING" level="warning" />
+    <regex match="ERROR" level="error" />
+  </stdio>
   <command><![CDATA[
-    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout' -max_steps '$adv.max_steps'
+    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout' -max_steps '$adv.max_steps' -max_paths '$adv.max_paths' -unfold_compounds '$adv.unfold_compounds'
   ]]></command>
   <inputs>
     <param name="rp_pathways" type="data" format="csv" label="RetroPath2.0 Pathways" />
-    <param name="timeout" type="integer" value="30" label="Time Out (minutes)" />
+    <param name="timeout" type="integer" value="30" label="Time Out (default: 30 min)" />
     <section name="adv" title="Advanced Options" expanded="false">
-      <param name="max_steps" type="integer" value="0" label="Maximal of steps for an output pathway" />
+      <param name="max_steps" type="integer" value="0" label="Maximal of steps for an output pathway (default: 0, i.e. Infinite)" />
+      <param name="max_paths" type="integer" value="150" label="Maximal number of pathways (default: 150)" />
+      <param name="unfold_compounds" type="boolean" truevalue="True" falsevalue="False" checked="false" label="Unfold pathways based on equivalencie of compounds (can lead to combinatorial explosion). (default: False)" />
     </section>
   </inputs>
   <outputs>
@@ -28,7 +34,9 @@
   <tests>
     <test>
       <param name="rp_pathways" value="examples/carotene/rp2-results.csv" />
-      <param name="timeout" value="900" />
+      <param name="timeout" value="90" />
+      <param name="max_steps" value="0" />
+      <param name="max_paths" value="150" />
     </test>
   </tests>
   <help><![CDATA[

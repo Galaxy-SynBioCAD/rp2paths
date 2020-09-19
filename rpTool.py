@@ -32,7 +32,7 @@ def limit_virtual_memory():
 ##
 #
 #
-def run_rp2paths(rp2_pathways, timeout, maxsteps=0, logger=None):
+def run_rp2paths(rp2_pathways, timeout, max_steps=0, max_paths=150, unfold_compounds=False, logger=None):
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ def run_rp2paths(rp2_pathways, timeout, maxsteps=0, logger=None):
         timeout_rest = int(timeout*60.0+10.0)
         if timeout>120:
             timeout_rest = 120
-        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout_rest*60.0))+' --maxsteps '+str(maxsteps)
+        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout_rest*60.0))+' --max_steps '+str(max_steps)+' --maxpaths '+str(max_paths)+' --unfold_compounds '+str(unfold_compounds)
         try:
             commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
             try:
