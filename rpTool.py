@@ -51,7 +51,7 @@ def run_rp2paths(rp2_pathways, timeout, logger=None):
             #TODO test to see what is the correct phrase
             if 'TIMEOUT' in result:
                 logger.error('Timeout from of ('+str(timeout)+' minutes)')
-                return b'', b'', b'timeout', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(e)+'\n tmpfolder: '+str(glob.glob(tmpfolder+'/*')))
+                return b'', b'', b'timeout', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(error)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
             if 'failed to map segment from shared object' in error:
                 logger.error('RP2paths does not have sufficient memory to continue')
                 return b'', b'', b'memoryerror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(error)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))

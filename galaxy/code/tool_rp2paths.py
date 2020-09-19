@@ -24,13 +24,15 @@ if __name__ == "__main__":
     parser.add_argument('-rp2paths_compounds', type=str)
     parser.add_argument('-timeout', type=int, default=30)
     params = parser.parse_args()
-    if params.timeout<0:
-        logging.error('Timeout cannot be <0 :'+str(params.timeout))
+    if params.timeout<=0:
+        logging.error('Timeout cannot be less or equal to 0 :'+str(params.timeout))
         exit(1)
     result = rpTool.run_rp2paths(params.rp_pathways, params.timeout)
+    if result[2]==b'timeout':
+        logging.error('RP2paths has reached its timeout limit')
+        exit(1)
     if result[2]==b'filenotfounderror':
-        logging.error('File not found')
-        logging.error(result[3])
+        logging.error('Cannot detect the out_path.csv and/or compounds.txt files')
         exit(1)
     elif result[2]==b'memoryerror':
         logging.error('Memory allocation error')
