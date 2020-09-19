@@ -23,19 +23,11 @@ if __name__ == "__main__":
     parser.add_argument('-rp2paths_pathways', type=str)
     parser.add_argument('-rp2paths_compounds', type=str)
     parser.add_argument('-timeout', type=int, default=30)
-    parser.add_argument('-max_steps', type=int, default=0)
-    parser.add_argument('-max_paths', type=int, default=150)
     params = parser.parse_args()
-    if params.max_steps<0:
-        logging.error('Cannot have max_steps be smaller than 0: '+str(params.max_steps))
-        exit(1)
-    if params.max_paths<=0:
-        logging.error('Cannot have max_paths be smaller or equal to 0: '+str(params.max_paths))
-        exit(1)
     if params.timeout<0:
         logging.error('Timeout cannot be <0 :'+str(params.timeout))
         exit(1)
-    result = rpTool.run_rp2paths(params.rp_pathways, params.timeout, params.max_steps, params.max_paths, unfold_compounds)
+    result = rpTool.run_rp2paths(params.rp_pathways, params.timeout)
     if result[2]==b'filenotfounderror':
         logging.error('File not found')
         logging.error(result[3])
