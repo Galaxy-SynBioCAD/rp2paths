@@ -8,7 +8,7 @@
     <regex match="ERROR" level="error" />
   </stdio>
   <command><![CDATA[
-    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout' -max_steps '$adv.max_steps' -max_paths '$adv.max_paths' -unfold_compounds '$adv.unfold_compounds'
+    '$__tool_directory__/tool_rp2paths.py' -rp_pathways '$rp_pathways' -rp2paths_pathways '$rp2paths_pathways' -rp2paths_compounds '$rp2paths_compounds' -timeout '$timeout' -max_steps '$adv.max_steps' -max_paths '$adv.max_paths'
   ]]></command>
   <inputs>
     <param name="rp_pathways" type="data" format="csv" label="RetroPath2.0 Pathways" />
@@ -16,7 +16,6 @@
     <section name="adv" title="Advanced Options" expanded="false">
       <param name="max_steps" type="integer" value="0" label="Maximal of steps for an output pathway (default: 0, i.e. Infinite)" />
       <param name="max_paths" type="integer" value="150" label="Maximal number of pathways (default: 150)" />
-      <param name="unfold_compounds" type="boolean" truevalue="True" falsevalue="False" checked="false" label="Unfold pathways based on equivalencie of compounds (can lead to combinatorial explosion). (default: False)" />
     </section>
   </inputs>
   <outputs>

@@ -25,15 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('-timeout', type=int, default=30)
     parser.add_argument('-max_steps', type=int, default=0)
     parser.add_argument('-max_paths', type=int, default=150)
-    parser.add_argument('-unfold_compounds', type=str, default='False')
     params = parser.parse_args()
-    if params.unfold_compounds=='True' or params.unfold_compounds=='T' or params.unfold_compounds=='true' or params.unfold_compounds=='t':
-        unfold_compounds = True
-    elif params.unfold_compounds=='False' or params.unfold_compounds=='F' or params.unfold_compounds=='false' or params.unfold_compounds=='f':
-        unfold_compounds = False
-    else:
-        logging.error('Cannot interpret unfold_compounds input: '+str(params.unfold_compounds))
-        exit(1)
     if params.max_steps<0:
         logging.error('Cannot have max_steps be smaller than 0: '+str(params.max_steps))
         exit(1)
