@@ -18,7 +18,7 @@ import glob
 ##
 #
 #
-def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_steps=0):
+def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_steps=0, max_paths=150, unfold_compounds=False):
     docker_client = docker.from_env()
     image_str = 'brsynth/rp2paths-standalone'
     try:
@@ -44,7 +44,11 @@ def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_ste
                    '-timeout',
                    str(timeout),
                    '-max_steps',
-                   str(max_steps)]
+                   str(max_steps),
+                   '-max_paths',
+                   str(max_paths),
+                   '-unfold_compounds',
+                   str(unfold_compounds)]
         container = docker_client.containers.run(image_str, 
                                                  command, 
                                                  detach=True,
@@ -74,8 +78,10 @@ if __name__ == "__main__":
     parser.add_argument('-rp2paths_compounds', type=str)
     parser.add_argument('-max_steps', type=int, default=0)
     parser.add_argument('-timeout', type=int, default=30)
+    parser.add_argument('-max_paths', type=int, default=150)
+    parser.add_argument('-unfold_compounds', type=str, default='False')
     params = parser.parse_args()
     if params.timeout<0:
         logging.error('Timeout cannot be <0 :'+str(params.timeout))
         exit(1)
-    main(params.rp_pathways, params.rp2paths_pathways, params.rp2paths_compounds, params.timeout, params.max_steps)
+    main(params.rp_pathways, params.rp2paths_pathways, params.rp2paths_compounds, params.timeout, params.max_steps, params.max_paths, params.unfold_compounds)
