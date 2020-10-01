@@ -11,6 +11,7 @@ import tempfile
 import glob
 import io
 import logging
+import os
 
 MAX_VIRTUAL_MEMORY = 20000 * 1024 * 1024 # 20GB -- define what is the best
 #MAX_VIRTUAL_MEMORY = 20 * 1024 * 1024 # 20GB -- define what is the best
@@ -31,14 +32,18 @@ def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
     out_paths = b''
     out_compounds = b''
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
-        rp2_pathways = tmpOutputFolder+'/tmp_rp2_pathways.csv'
-        with open(tmpOutputFolder+'/tmp_rp2_pathways.csv', 'wb') as outfi:
+        rp2_pathways = os.path.join(tmpOutputFolder, 'tmp_rp2_pathways.csv')
+        with open(rp2_pathways, 'wb') as outfi:
             outfi.write(rp2_pathways_bytes)
-        #rp2paths_command = ['python', 'rp2paths-1.0.2/RP2paths.py', 'all', rp2_pathways, '--outdir', tmpOutputFolder, '--timeout', str(timeout)]
-        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+' --timeout '+str(int(timeout*60.0+10.0))
+        rp2paths_command = 'python /home/RP2paths.py all '+str(rp2_pathways)+' --outdir '+str(tmpOutputFolder)+'/ --timeout '+str(int(timeout*60.0))
         try:
-            commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, preexec_fn=limit_virtual_memory)
-            #commandObj = subprocess.Popen(rp2paths_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, preexec_fn=limit_virtual_memory)
+            commandObj = subprocess.Popen(rp2paths_command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=limit_virtual_memory)
+            result = b''
+            error = b''
+            result, error = commandObj.communicate()
+            result = result.decode('utf-8')
+            error = error.decode('utf-8')
+            """
             try:
                 commandObj.wait(timeout=timeout*60.0)
             except subprocess.TimeoutExpired as e:
@@ -48,7 +53,11 @@ def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
             (result, error) = commandObj.communicate()
             result = result.decode('utf-8')
             error = error.decode('utf-8')
+            """
             #TODO test to see what is the correct phrase
+            if 'TIMEOUT' in result:
+                logger.error('Timeout from of ('+str(timeout)+' minutes)')
+                return b'', b'', b'timeout', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(error)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
             if 'failed to map segment from shared object' in error:
                 logger.error('RP2paths does not have sufficient memory to continue')
                 return b'', b'', b'memoryerror', str.encode('Command: '+str(rp2paths_command)+'\n Error: '+str(error)+'\n tmpOutputFolder: '+str(glob.glob(tmpOutputFolder+'/*')))
