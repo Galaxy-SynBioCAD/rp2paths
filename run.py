@@ -51,37 +51,46 @@ def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_ste
             logging.error('Cannot pull image: '+str(image_str))
             exit(1)
     with tempfile.TemporaryDirectory() as tmpOutputFolder:
-        shutil.copy(rp_pathways, tmpOutputFolder+'/rp_pathways.csv')
-        command = ['python',
-                   '/home/tool_rp2paths.py',
-                   '-rp_pathways',
-                   '/home/tmp_output/rp_pathways.csv',
-                   '-rp2paths_compounds',
-                   '/home/tmp_output/rp2paths_compounds.csv',
-                   '-rp2paths_pathways',
-                   '/home/tmp_output/rp2paths_pathways.csv',
-                   '-timeout',
-                   str(timeout),
-                   '-max_steps',
-                   str(max_steps),
-                   '-max_paths',
-                   str(max_paths),
-                   '-unfold_compounds',
-                   str(unfold_compounds)]
-        container = docker_client.containers.run(image_str, 
-                                                 command, 
-                                                 detach=True,
-                                                 stderr=True,
-                                                 volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
-        container.wait()
-        err = container.logs(stdout=False, stderr=True)
-        err_str = err.decode('utf-8')
-        if not 'ERROR' in err_str:
-            shutil.copy(tmpOutputFolder+'/rp2paths_pathways.csv', rp2paths_pathways)
-            shutil.copy(tmpOutputFolder+'/rp2paths_compounds.csv', rp2paths_compounds)
+        if os.path.exists(rp_pathways):
+            shutil.copy(rp_pathways, tmpOutputFolder+'/rp_pathways.csv')
+            command = ['python',
+                       '/home/tool_rp2paths.py',
+                       '-rp_pathways',
+                       '/home/tmp_output/rp_pathways.csv',
+                       '-rp2paths_compounds',
+                       '/home/tmp_output/rp2paths_compounds.csv',
+                       '-rp2paths_pathways',
+                       '/home/tmp_output/rp2paths_pathways.csv',
+                       '-timeout',
+                       str(timeout),
+                       '-max_steps',
+                       str(max_steps),
+                       '-max_paths',
+                       str(max_paths),
+                       '-unfold_compounds',
+                       str(unfold_compounds)]
+            container = docker_client.containers.run(image_str, 
+                                                     command, 
+                                                     detach=True,
+                                                     stderr=True,
+                                                     volumes={tmpOutputFolder+'/': {'bind': '/home/tmp_output', 'mode': 'rw'}})
+            container.wait()
+            err = container.logs(stdout=False, stderr=True)
+            err_str = err.decode('utf-8')
+            if 'ERROR' in err_str:
+                print(err_str)
+            elif 'WARNING' in err_str:
+                print(err_str)
+            if not os.path.exists(tmpOutputFolder+'/rp2paths_compounds.csv') or not os.path.exists(tmpOutputFolder+'/rp2paths_pathways.csv'):
+                print('ERROR: Cannot find the output file: '+str(tmpOutputFolder+'/rp2paths_compounds.csv'))
+                print('ERROR: Cannot find the output file: '+str(tmpOutputFolder+'/rp2paths_pathways.csv'))
+            else:
+                shutil.copy(tmpOutputFolder+'/rp2paths_pathways.csv', rp2paths_pathways)
+                shutil.copy(tmpOutputFolder+'/rp2paths_compounds.csv', rp2paths_compounds)
+            container.remove()
         else:
-            print(err_str)
-        container.remove()
+            logging.error('Cannot find one or more of the input files: '+str(rp_pathways))
+            exit(1)
 
 
 if __name__ == "__main__":
