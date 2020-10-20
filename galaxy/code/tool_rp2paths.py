@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument('-rp2paths_pathways', type=str)
     parser.add_argument('-rp2paths_compounds', type=str)
     parser.add_argument('-timeout', type=int, default=30)
-    parser.add_argument('-server_url', type=str)
+    parser.add_argument('-server_url', type=str, default='http://0.0.0.0:8887/REST')
     params = parser.parse_args()
     if params.timeout<0:
         logging.error('Time out cannot be less than 0: '+str(params.timeout))
