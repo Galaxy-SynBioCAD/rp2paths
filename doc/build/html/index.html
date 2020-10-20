@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to rp2paths’s documentation! &#8212; rp2paths v0.1 documentation</title>
+    <title>rp2Paths’s Documentation &#8212; rp2paths v0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -31,18 +31,89 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-rp2paths-s-documentation">
-<h1>Welcome to rp2paths’s documentation!<a class="headerlink" href="#welcome-to-rp2paths-s-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-</div>
-</div>
+  <div class="section" id="rp2paths-s-documentation">
+<h1>rp2Paths’s Documentation<a class="headerlink" href="#rp2paths-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Welcome to rp2Paths’s documentation. This project wraps the <a class="reference external" href="https://github.com/brsynth/rp2paths">rp2Paths</a> into a docker that may be called locally.</p>
+<p>First build the docker using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build -t brsynth/rp2paths-standalone .
+</pre></div>
+</div>
+<p>To call the docker locally you can use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python run.py -rp_pathways test/rp_pathways.csv -rp2paths_pathways test/out_paths.csv -rp2paths_compounds test/out_compounds.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class">
+<dt id="rpTool.run_rp2paths">
+<em class="property">class </em><code class="sig-prename descclassname">rpTool.</code><code class="sig-name descname">run_rp2paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rp2_pathways</span></em>, <em class="sig-param"><span class="n">timeout</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#rpTool.run_rp2paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the KNIME RetroPath2.0 workflow</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rp2_pathways</strong> – The path to the RetroPath2.0 scope results</p></li>
+<li><p><strong>timeout</strong> – The timeout of the function in minutes</p></li>
+<li><p><strong>logger</strong> – Logger object (Default: None)</p></li>
+<li><p><strong>source_bytes</strong> – str</p></li>
+<li><p><strong>sink_bytes</strong> – int</p></li>
+<li><p><strong>logger</strong> – logging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>tuple of bytes with the out_paths results, compounds results, the status message, the command used</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="run.main">
+<em class="property">class </em><code class="sig-prename descclassname">run.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rp_pathways</span></em>, <em class="sig-param"><span class="n">rp2paths_pathways</span></em>, <em class="sig-param"><span class="n">rp2paths_compounds</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">30</span></em>, <em class="sig-param"><span class="n">max_steps</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_paths</span><span class="o">=</span><span class="default_value">150</span></em>, <em class="sig-param"><span class="n">unfold_compounds</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#run.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the docker to run rp2paths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rp_pathways</strong> – The path to the results RetroPath2.0 scope file</p></li>
+<li><p><strong>rp2paths_pathways</strong> – The path to the results rp2paths out_paths file</p></li>
+<li><p><strong>rp2paths_compounds</strong> – The path to the results rp2paths compounds file</p></li>
+<li><p><strong>timeout</strong> – The timeout of the function in minutes (Default: 90)</p></li>
+<li><p><strong>max_steps</strong> – The maximal number of steps WARNING: not used (Default: 0, ie. infinite)</p></li>
+<li><p><strong>max_paths</strong> – The maximal number of pathways to return WARNING: not used (Default: 150)</p></li>
+<li><p><strong>unfold_compounds</strong> – not sure WARNING: not used (Default: False)</p></li>
+<li><p><strong>rp_pathways</strong> – str</p></li>
+<li><p><strong>rp2paths_pathways</strong> – str</p></li>
+<li><p><strong>rp2paths_compounds</strong> – str</p></li>
+<li><p><strong>timeout</strong> – int</p></li>
+<li><p><strong>max_steps</strong> – int</p></li>
+<li><p><strong>max_paths</strong> – int</p></li>
+<li><p><strong>unfold_compounds</strong> – bool</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 
