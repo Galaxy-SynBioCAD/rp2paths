@@ -3,7 +3,7 @@
 Created on September 21 2019
 
 @author: Melchior du Lac
-@description: Extract the sink from an SBML into RP2 friendly format
+@description: Wrap rp2paths into a docker
 
 """
 import argparse
@@ -15,10 +15,29 @@ import docker
 
 import glob
 
-##
-#
-#
 def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_steps=0, max_paths=150, unfold_compounds=False):
+    """Call the docker to run rp2paths 
+
+    :param rp_pathways: The path to the results RetroPath2.0 scope file
+    :param rp2paths_pathways: The path to the results rp2paths out_paths file
+    :param rp2paths_compounds: The path to the results rp2paths compounds file
+    :param timeout: The timeout of the function in minutes (Default: 90)
+    :param max_steps: The maximal number of steps WARNING: not used (Default: 0, ie. infinite)
+    :param max_paths: The maximal number of pathways to return WARNING: not used (Default: 150)
+    :param unfold_compounds: not sure WARNING: not used (Default: False)
+
+    :param rp_pathways: str
+    :param rp2paths_pathways: str 
+    :param rp2paths_compounds: str
+    :param timeout: int
+    :param max_steps: int
+    :param max_paths: int
+    :param unfold_compounds: bool
+
+    :rtype: None
+    :return: None
+    """
+
     docker_client = docker.from_env()
     image_str = 'brsynth/rp2paths-standalone'
     try:
@@ -65,12 +84,6 @@ def main(rp_pathways, rp2paths_pathways, rp2paths_compounds, timeout=30, max_ste
         container.remove()
 
 
-
-
-
-##
-#
-#
 if __name__ == "__main__":
     parser = argparse.ArgumentParser('Enumerate the individual pathways from the results of Retropath2')
     parser.add_argument('-rp_pathways', type=str)

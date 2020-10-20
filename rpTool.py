@@ -16,6 +16,7 @@ import logging
 logging.basicConfig(
     #level=logging.DEBUG,
     level=logging.WARNING,
+    #level=logging.ERROR,
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%d-%m-%Y %H:%M:%S',
 )
@@ -27,12 +28,24 @@ MAX_VIRTUAL_MEMORY = 20000 * 1024 * 1024 # 20GB -- define what is the best
 #
 #
 def limit_virtual_memory():
+    """The function to set the memory limits
+    """
     resource.setrlimit(resource.RLIMIT_AS, (MAX_VIRTUAL_MEMORY, resource.RLIM_INFINITY))
 
-##
-#
-#
 def run_rp2paths(rp2_pathways, timeout, logger=None):
+    """Call the KNIME RetroPath2.0 workflow
+
+    :param rp2_pathways: The path to the RetroPath2.0 scope results
+    :param timeout: The timeout of the function in minutes
+    :param logger: Logger object (Default: None)
+
+    :param source_bytes: str
+    :param sink_bytes: int
+    :param logger: logging
+
+    :rtype: tuple
+    :return: tuple of bytes with the out_paths results, compounds results, the status message, the command used
+    """
     ### not sure why throws an error:
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
