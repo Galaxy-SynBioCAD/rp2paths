@@ -13,19 +13,29 @@ import io
 import logging
 import os
 
+
 MAX_VIRTUAL_MEMORY = 20000 * 1024 * 1024 # 20GB -- define what is the best
 #MAX_VIRTUAL_MEMORY = 20 * 1024 * 1024 # 20GB -- define what is the best
 
-##
-#
-#
+
 def limit_virtual_memory():
     resource.setrlimit(resource.RLIMIT_AS, (MAX_VIRTUAL_MEMORY, resource.RLIM_INFINITY))
 
-##
-#
-#
+
 def run_rp2paths(rp2_pathways_bytes, timeout, logger=None):
+    """Make a subprocess call of rp2paths
+
+    :param rp2_pathways_bytes: The rp2 pathways file as bytes
+    :param timeout: The timeout of the function in minutes
+    :param logger: The logging object
+
+    :type rp2_pathways_bytes: bytes
+    :type timeout: int
+    :type logger: logging
+
+    :rtype: tuple
+    :return: tuple of bytes with the out_paths, the compunds, the status message, the command used
+    """
     if logger==None:
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger(__name__)
